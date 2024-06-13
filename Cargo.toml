@@ -1,5 +1,8 @@
 [package]
 name = "num-format2"
+description = "A number formatting library for Rust"
+categories = ["formatting", "number"]
+license = "MIT"
 version = "0.0.0"
 edition = "2021"
 
