@@ -4,4 +4,8 @@
 layout: default
 ---
 
-# Test
+<h1>num-format2 Development Blog</h1>
+
+{% for post in site.posts %}
+<a href="{{ site.baseurl }}{{ post.url }}"><p>{{ post.title }}</p></a>
+{% endfor %}

@@ -1,0 +1,28 @@
+---
+layout: post
+title:  "Prior Art"
+date:   2024-06-14 00:04:30 +0100
+---
+
+Before I start work on building a new number formatting library for Rust, it makes sense to look at existing libraries and their successes and failures.
+
+## num-format (0.4.4)
+
+[Brian Myers'](https://github.com/bcmyers) [num-format](https://crates.io/crates/num-format) is the library I usually use for putting thousands-separator commas into numbers to make them easier to read.
+It's for this reason that I've chosen the name num-format2 as it is this library that I want to surpass.
+
+num-format is just about inserting separator symbols into numbers, it doesn't do scientific notation or SI prefixes like some other libraries do. Despite this more narrow scope it still has obvious limitations. It doesn't support floating point numbers, just the integer primitives and the NonZero types from the core library.
+Support for the BigInt and BigUnit types from num-bigint can be enabled with a feature flag but no other third-party number types are supported. Of particular concern to me is the lack of support for rust_decimal's Decimal type as I use it regularly for financials data at work. This could all be overcome if it weren't for the fact that the traits that power num-format are sealed, so no-one else can add these missing implementations in any way.
+
+num-format has a concept of formats, which can either be one of an extensive list of locales, or a custom format. These formats are a bundle of configurations for what symbols to use and how to place them. The placement is controlled by a type called Grouping with only three options, Standard, Indian, and Posix (no grouping).
+num-format has three options for how a number can be formatted into the request format, ToFormattedString, Buffer, and WriteFormatted. ToFormattedString is the easiest to use, but heap allocates and needs the std library. Buffer is the most performant, with no heap allocation or dependency on std, but has a fixed buffer size which makes it incompatible with num-bigint's types. Finally, WriteFormatted uses std::io::Write and std::fmt::Write with no heap allocation but still an apparent dependency on std.
+
+num-format's maintenance status could be fairly described as unmaintained. Version 0.4.4, the most recent release at time of writing, was released in December of 2022. No commits have been made to the GitHub repo since that time and issues and PRs opened since then remain unaddressed by Brian. The crate on crates.io list over 12 million all-time downloads, making it the most popular number formatting library on crates.io.
+
+## separator (0.4.1)
+
+[Saghm Rossi's](https://github.com/saghm) [separator](https://crates.io/crates/separator) library is, like num-format, also about putting thousands-separator commas into numbers. In fact a note exists at the top of the README advising the use of num-format over separator. Rossi describes num-format as entirely superseding and having all the features of separator, though this isn't quite true as separator supports floating point numbers which num-format does not.
+
+separator's functionality is at its core implemented as a suite of macros, with a few traits making up the more typical usage interface. There's no locale or customisation support to speak of besides a trait which provides a method on floats that lets you control the number of digits after the decimal point.
+
+separator's last release and commit was in March of 2019, making it decidedly unmaintained. Despite this it still sees several thousand downloads from crates.io each day, with 1.7 million all-time downloads.
