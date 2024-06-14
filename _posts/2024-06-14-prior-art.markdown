@@ -26,3 +26,9 @@ num-format's maintenance status could be fairly described as unmaintained. Versi
 separator's functionality is at its core implemented as a suite of macros, with a few traits making up the more typical usage interface. There's no locale or customisation support to speak of besides a trait which provides a method on floats that lets you control the number of digits after the decimal point.
 
 separator's last release and commit was in March of 2019, making it decidedly unmaintained. Despite this it still sees several thousand downloads from crates.io each day, with 1.7 million all-time downloads.
+
+## thousands (0.2.0)
+
+[Jesse A. Tov's](https://github.com/tov) [thousands](https://crates.io/crates/thousands) library is another that is about separator symbols.
+
+thousands' last release and commit was in October of 2019, making it also unmaintained. There's only one open issue, opened this year, and it is currently unanswered. There are only two closed issues so the lower number of open issues is more an indication of lack of popularity than of active maintenance. Surprisingly, thousands still gets over 10,000 daily downloads from crates.io, with 4.8 million all time downloads.
