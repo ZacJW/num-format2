@@ -1,34 +1,205 @@
 ---
 layout: post
-title:  "Prior Art"
-date:   2024-06-14 00:04:30 +0100
+title: "Prior Art"
+date: 2024-06-14 00:04:30 +0100
 ---
 
-Before I start work on building a new number formatting library for Rust, it makes sense to look at existing libraries and their successes and failures.
+Before I start work on building a new number formatting library for Rust, it
+makes sense to look at existing libraries and their successes and failures.
 
 ## num-format (0.4.4)
 
-[Brian Myers'](https://github.com/bcmyers) [num-format](https://crates.io/crates/num-format) is the library I usually use for putting thousands-separator commas into numbers to make them easier to read.
-It's for this reason that I've chosen the name num-format2 as it is this library that I want to surpass.
+[Brian Myers'](https://github.com/bcmyers)
+[num-format](https://crates.io/crates/num-format) is the library I usually use
+for putting thousands-separator commas into numbers to make them easier to read.
+It's for this reason that I've chosen the name num-format2 as it is this library
+that I want to surpass.
 
-num-format is just about inserting separator symbols into numbers, it doesn't do scientific notation or SI prefixes like some other libraries do. Despite this more narrow scope it still has obvious limitations. It doesn't support floating point numbers, just the integer primitives and the NonZero types from the core library.
-Support for the BigInt and BigUnit types from num-bigint can be enabled with a feature flag but no other third-party number types are supported. Of particular concern to me is the lack of support for rust_decimal's Decimal type as I use it regularly for financials data at work. This could all be overcome if it weren't for the fact that the traits that power num-format are sealed, so no-one else can add these missing implementations in any way.
+num-format is just about inserting separator symbols into numbers, it doesn't do
+scientific notation or SI prefixes like some other libraries do. Despite this
+more narrow scope it still has obvious limitations. It doesn't support floating
+point numbers, just the integer primitives and the NonZero types from the core
+library. Support for the BigInt and BigUnit types from num-bigint can be enabled
+with a feature flag but no other third-party number types are supported. Of
+particular concern to me is the lack of support for rust_decimal's Decimal type
+as I use it regularly for financials data at work. This could all be overcome if
+it weren't for the fact that the traits that power num-format are sealed, so
+no-one else can add these missing implementations in any way.
 
-num-format has a concept of formats, which can either be one of an extensive list of locales, or a custom format. These formats are a bundle of configurations for what symbols to use and how to place them. The placement is controlled by a type called Grouping with only three options, Standard, Indian, and Posix (no grouping).
-num-format has three options for how a number can be formatted into the request format, ToFormattedString, Buffer, and WriteFormatted. ToFormattedString is the easiest to use, but heap allocates and needs the std library. Buffer is the most performant, with no heap allocation or dependency on std, but has a fixed buffer size which makes it incompatible with num-bigint's types. Finally, WriteFormatted uses std::io::Write and std::fmt::Write with no heap allocation but still an apparent dependency on std.
+num-format has a concept of formats, which can either be one of an extensive
+list of locales, or a custom format. These formats are a bundle of
+configurations for what symbols to use and how to place them. The placement is
+controlled by a type called Grouping with only three options, Standard, Indian,
+and Posix (no grouping). num-format has three options for how a number can be
+formatted into the request format, ToFormattedString, Buffer, and
+WriteFormatted. ToFormattedString is the easiest to use, but heap allocates and
+needs the std library. Buffer is the most performant, with no heap allocation or
+dependency on std, but has a fixed buffer size which makes it incompatible with
+num-bigint's types. Finally, WriteFormatted uses std::io::Write and
+std::fmt::Write with no heap allocation but still an apparent dependency on std.
 
-num-format's maintenance status could be fairly described as unmaintained. Version 0.4.4, the most recent release at time of writing, was released in December of 2022. No commits have been made to the GitHub repo since that time and issues and PRs opened since then remain unaddressed by Brian. The crate on crates.io list over 12 million all-time downloads, making it the most popular number formatting library on crates.io.
+num-format's maintenance status could be fairly described as unmaintained.
+Version 0.4.4, the most recent release at time of writing, was released in
+December of 2022. No commits have been made to the GitHub repo since that time
+and issues and PRs opened since then remain unaddressed by Brian. The crate on
+crates.io list over 12 million all-time downloads, making it the most popular
+number formatting library on crates.io.
 
 ## separator (0.4.1)
 
-[Saghm Rossi's](https://github.com/saghm) [separator](https://crates.io/crates/separator) library is, like num-format, also about putting thousands-separator commas into numbers. In fact a note exists at the top of the README advising the use of num-format over separator. Rossi describes num-format as entirely superseding and having all the features of separator, though this isn't quite true as separator supports floating point numbers which num-format does not.
+[Saghm Rossi's](https://github.com/saghm)
+[separator](https://crates.io/crates/separator) library is, like num-format,
+also about putting thousands-separator commas into numbers. In fact a note
+exists at the top of the README advising the use of num-format over separator.
+Rossi describes num-format as entirely superseding and having all the features
+of separator, though this isn't quite true as separator supports floating point
+numbers which num-format does not.
 
-separator's functionality is at its core implemented as a suite of macros, with a few traits making up the more typical usage interface. There's no locale or customisation support to speak of besides a trait which provides a method on floats that lets you control the number of digits after the decimal point.
+separator's functionality is at its core implemented as a suite of macros, with
+a few traits making up the more typical usage interface. There's no locale or
+customisation support to speak of besides a trait which provides a method on
+floats that lets you control the number of digits after the decimal point.
 
-separator's last release and commit was in March of 2019, making it decidedly unmaintained. Despite this it still sees several thousand downloads from crates.io each day, with 1.7 million all-time downloads.
+separator's last release and commit was in March of 2019, making it decidedly
+unmaintained. Despite this it still sees several thousand downloads from
+crates.io each day, with 1.7 million all-time downloads.
 
 ## thousands (0.2.0)
 
-[Jesse A. Tov's](https://github.com/tov) [thousands](https://crates.io/crates/thousands) library is another that is about separator symbols.
+[Jesse A. Tov's](https://github.com/tov)
+[thousands](https://crates.io/crates/thousands) library is another that is about
+separator symbols.
 
-thousands' last release and commit was in October of 2019, making it also unmaintained. There's only one open issue, opened this year, and it is currently unanswered. There are only two closed issues so the lower number of open issues is more an indication of lack of popularity than of active maintenance. Surprisingly, thousands still gets over 10,000 daily downloads from crates.io, with 4.8 million all time downloads.
+thousands provides a Separable trait which is implemented for all types that
+implement std::fmt::Display. The behaviour is customisable through the use of
+the SeparatorPolicy type, which has a simple but surprisingly powerful way of
+controlling how the separators get placed and what those separators are.
+
+thousands works internally by using Display to convert the number to a string
+and then creating an output string with the right capacity, iterating through
+the source string copying characters and inserting separators into the output as
+it goes. This means there are two heap allocations made for each number being
+formatted, with one of them being the returned value, so thousands requires at
+least the alloc library. In practice it depends on std as the author didn't take
+care to use core and alloc only. The fact that it uses Display makes it very
+widely compatible. Most number types, first and third party, will work fine.
+thousands' SeparatorPolicy can even allow what counts as a digit to be
+customised so it could in theory work with other bases besides 10 or other
+numerals besides Arabic, but the Display implementation of the type would have
+to handle that as it has no conversion logic.
+
+thousands' last release and commit was in October of 2019, making it also
+unmaintained. There's only one open issue, opened this year, and it is currently
+unanswered. There are only two closed issues so the lower number of open issues
+is more an indication of lack of popularity than of active maintenance.
+Surprisingly, thousands still gets over 10,000 daily downloads from crates.io,
+with 4.8 million all time downloads.
+
+## numfmt (1.1.1)
+
+[Kurt Lawrence's](https://github.com/kurtlawrence)
+[numfmt](https://crates.io/crates/numfmt) is a very broad library with support
+for thousands separators, scientific notation, currency prefixes, precision
+controls, and scale suffixes.
+
+numfmt has a concept of a Formatter which, like other libraries, is a bundle of
+configuration. It has options for using a comma as the decimal point,
+controlling the precision by either significant figures or decimal places,
+appling a currency prefix symbol, setting scale suffixes including custom ones,
+setting an arbitrary transformation function, and setting a thousands separator
+symbol. There's no way to customise how the separators get placed, and the
+separator can only be a single byte character. The currency prefix is just a
+string, no logic for selecting between different options based on the scale of
+the input. The custom scales have to be evenly geometrically spaced, where
+multiplying or dividing by a constant takes you up or down the list of suffixes.
+
+For a type to be formattable with numfmt it must implement numfmt's Numeric
+type, which is done for the integer and floating point primitives. No
+implementations are provided for third-party types, but the trait isn't sealed
+so that can be worked around. What can't be worked around is that Numeric is
+basically just a conversion to f64, with the rest of library just working with
+f64 values internally. This means range and precision are fundamentally limited
+in numfmt, making it a poor fit for working with big integer types like
+num-bigint's BigInt or fixed point types like rust_decimal's Decimal.
+
+Formatting in numfmt makes use of an internal fixed size buffer which is heap
+allocated. Suffix scales also use Vec which means more heap allocation. std is
+required but, as far as I can tell, only alloc should be necessary. numfmt's
+documentation mentions that if a Formatter can be reused it makes numfmt much
+more performant than the standard library.
+
+numfmt's last release was in July of 2023, and has no open issues or PRs so it
+could probably be considered maintained. The lack of newer releases may be more
+a product of the library being complete than it being abandoned. Despite its
+high quality, numfmt only receives around 100 daily downloads from crates.io,
+with only 15 thousand all-time downloads.
+
+## human_format (1.1.0)
+
+<https://crates.io/crates/human_format>
+
+## spanish-numbers (0.1.4)
+
+<https://crates.io/crates/spanish-numbers>
+
+## lexical-write-float (0.8.5) & lexical-write-integer (0.8.5)
+
+<https://crates.io/crates/lexical-write-float>
+
+<https://crates.io/crates/lexical-write-integer>
+
+## format_num (0.1.0)
+
+<https://crates.io/crates/format_num>
+
+## signifix (0.10.1)
+
+<https://crates.io/crates/signifix>
+
+## formato (0.2.0)
+
+<https://crates.io/crates/formato>
+
+## si_format (0.1.1)
+
+<https://crates.io/crates/si_format>
+
+## si-scale (0.2.2)
+
+<https://crates.io/crates/si-scale>
+
+## english-numbers (0.3.3)
+
+<https://crates.io/crates/english-numbers>
+
+## kaktovik (0.1.4)
+
+<https://crates.io/crates/kaktovik>
+
+## radix_fmt (1.0.0)
+
+<https://crates.io/crates/radix_fmt>
+
+## endinero (0.1.7)
+
+<https://crates.io/crates/endinero>
+
+## format_num_pattern (0.9.2)
+
+<https://crates.io/crates/format_num_pattern>
+
+## pretty_toa (1.0.0)
+
+<https://crates.io/crates/pretty_toa>
+
+## anzahlmenschen (0.1.0)
+
+<https://crates.io/crates/anzahlmenschen>
+
+## pakr-iec (1.0.1)
+
+<https://crates.io/crates/pakr-iec>
+
+## Lotus (0.2.1)
+
+<https://crates.io/crates/Lotus/0.2.1>
