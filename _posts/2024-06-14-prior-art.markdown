@@ -114,7 +114,7 @@ the input. The custom scales have to be evenly geometrically spaced, where
 multiplying or dividing by a constant takes you up or down the list of suffixes.
 
 For a type to be formattable with numfmt it must implement numfmt's Numeric
-type, which is done for the integer and floating point primitives. No
+trait, which is done for the integer and floating point primitives. No
 implementations are provided for third-party types, but the trait isn't sealed
 so that can be worked around. What can't be worked around is that Numeric is
 basically just a conversion to f64, with the rest of library just working with
