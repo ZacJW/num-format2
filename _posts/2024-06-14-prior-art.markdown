@@ -31,7 +31,7 @@ list of locales, or a custom format. These formats are a bundle of
 configurations for what symbols to use and how to place them. The placement is
 controlled by a type called Grouping with only three options, Standard, Indian,
 and Posix (no grouping). num-format has three options for how a number can be
-formatted into the request format, ToFormattedString, Buffer, and
+formatted into the requested format, ToFormattedString, Buffer, and
 WriteFormatted. ToFormattedString is the easiest to use, but heap allocates and
 needs the std library. Buffer is the most performant, with no heap allocation or
 dependency on std, but has a fixed buffer size which makes it incompatible with
